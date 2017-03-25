@@ -20,7 +20,7 @@
     state: present
 
 - name: Get backup users
-  shell: "cat /etc/passwd | cut -d: -f1 | grep backup_"
+  shell: "cat /etc/passwd | cut -d: -f1 | grep backup_ | cat"
   changed_when: False
   register: backup_users_on_system
 
