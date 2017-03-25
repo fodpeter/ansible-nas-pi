@@ -1,0 +1,14 @@
+---
+usb_mount_point: /mnt/data
+
+backup_accounts:
+  backup_peti_asus:
+    smbpasswd: "{{ vault_pass['asus'].smbpasswd }}"
+  backup_timi_hp:
+    smbpasswd: "{{ vault_pass['hp'].smbpasswd }}"
+
+public_share:
+  peti:
+    smbpasswd: "{{ vault_shared_drive_passwd }}"
+
+user_accounts: "{{ backup_accounts | combine(public_share) }}"

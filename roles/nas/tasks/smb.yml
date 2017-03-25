@@ -1,0 +1,60 @@
+- name: Ensure samba packages are installed
+  apt:
+    name: "{{item}}"
+    state: installed
+  with_items:
+      - samba
+      - samba-common-bin
+
+- name: Copy the Customize smb.conf file
+  template:
+    src: etc_samba_smb.conf.j2
+    dest: /etc/samba/smb.conf
+    backup: yes
+  notify:
+    - Restart Samba
+
+- name: Create Samba users restricted group
+  group:
+    name: "{{ samba_group_name }}"
+    state: present
+
+- name: Get backup users
+  shell: "cat /etc/passwd | cut -d: -f1 | grep backup_"
+  changed_when: False
+  register: backup_users_on_system
+
+- name: Remove not needed users
+  user:
+    name: "{{ item }}"
+    state: absent
+    force: yes
+  with_items: "{{ backup_users_on_system.stdout_lines | difference(user_accounts.keys())}}"
+
+- name: Add linux users
+  user:
+    name: "{{ item.key }}"
+    createhome: false
+    group: "{{ samba_group_name }}"
+  with_dict: "{{ user_accounts }}"
+
+- name: Create samba password for user
+  shell: "(echo {{ item.value.smbpasswd }}; echo {{ item.value.smbpasswd }}) | smbpasswd -s -a {{ item.key }}"
+  with_dict: "{{ user_accounts }}"
+
+- name: "Create {{ public_share_path }} directory"
+  file:
+    state: directory
+    path: "{{ public_share_path }}"
+    owner: nobody
+    group: "{{ samba_group_name }}"
+    mode: 0750
+
+- name: "Create backup directories"
+  file:
+    state: directory
+    path: "{{ usb_mount_point }}/backup/{{ item.key }}"
+    owner: root
+    group: "{{ samba_group_name }}"
+    mode: 1770
+  with_dict: "{{ backup_accounts }}"

@@ -1,0 +1,12 @@
+- name: ensure packages are installed
+  apt:
+    state: present
+    name: ntfs-3g
+
+- name: Add fstab entry
+  mount:
+    name: "{{ usb_mount_point }}"
+    src: /dev/sda1
+    fstype: ntfs-3g
+    opts: defaults,noatime
+    state: mounted

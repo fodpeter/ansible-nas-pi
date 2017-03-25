@@ -1,0 +1,4 @@
+hosts
+.vault_pass.txt
+vault.yml
+*.retry

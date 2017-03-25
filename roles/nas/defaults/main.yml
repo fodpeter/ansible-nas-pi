@@ -1,0 +1,5 @@
+---
+workgroup: WORKGROUP
+public_share_name: NAS
+public_share_path: "{{ usb_mount_point }}/shared"
+samba_group_name: smbgrp
