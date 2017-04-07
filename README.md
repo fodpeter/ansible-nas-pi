@@ -47,3 +47,7 @@ or simply
 Inspiration:
 * https://github.com/arbabnazar/ansible-roles/tree/master/samba
 * https://github.com/motdotla/ansible-pi
+
+## Pictures
+
+![alt text](nas_pi.jpg "Raspberry Pi 3")
